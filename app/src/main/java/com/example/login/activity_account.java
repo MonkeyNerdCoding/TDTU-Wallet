@@ -52,7 +52,6 @@ public class activity_account extends AppCompatActivity {
         BtnSignOut = findViewById(R.id.btnSignOut);
         mAuth = FirebaseAuth.getInstance();
 
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference reference = database.getReference("User").child(username);
 
