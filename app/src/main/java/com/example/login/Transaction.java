@@ -1,6 +1,8 @@
 package com.example.login;
 
-public class Transaction {
+import java.io.Serializable;
+
+public class Transaction implements Serializable {
     private String account;
     private String category;
     private String amount;
