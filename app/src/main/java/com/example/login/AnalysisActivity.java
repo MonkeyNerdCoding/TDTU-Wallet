@@ -257,14 +257,13 @@ public class AnalysisActivity extends AppCompatActivity {
         for (int i = 1; i <= 50; i++) {
             if (i > 9 && i <= 31) {
                 if (i % 2 == 0) {
-                    transactions.add(new Transaction(i + "/07/2024", i, "" + (i * 100000), "Travel", "Saving", "plus", "Blah Blah"));
+                    transactions.add(new Transaction("user", "Travel", "" + (i * 100000), "Blah Blah", i + "/07/2024", true));
                 } else {
-                    transactions.add(new Transaction(i + "/07/2024", i, "" + (i * 30000), "Shopping", "Personal", "minus", "This is the note for the testing. Ha Ha."));
+                    transactions.add(new Transaction("user", "Shopping", "" + (i * 30000), "This is the note for the testing. Ha Ha.", i + "/07/2024", false));
                 }
             } else {
-                transactions.add(new Transaction("07/07/2024", i, "" + (i * 20000 ), "others", "Business", "plus", "Nothing to say."));
+                transactions.add(new Transaction("user", "others", "" + (i * 20000 ), "Nothing to say", "07/07/2024", true));
             }
-
 
         }
     }
@@ -283,14 +282,12 @@ public class AnalysisActivity extends AppCompatActivity {
             int transactionMonth = Integer.parseInt(date.substring(3, 5));
             int transactionYear = Integer.parseInt(date.substring(6, 10));
             int week = (Integer.parseInt(date.substring(0, 2)) - 1) / 7;
-            String transactionSign = transaction.getSign();
+            Boolean transactionSign = transaction.isIncome();
 
             if (transactionMonth == month && transactionYear == year) {
-                if (transactionSign.equals("plus")) {
+                if (transactionSign) {
                     weeklyIncome[week] += Integer.parseInt(transaction.getAmount());
-                }
-
-                if (transactionSign.equals("minus")) {
+                } else {
                     weeklyExpense[week] += Integer.parseInt(transaction.getAmount());
                 }
             }

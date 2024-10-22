@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="buttonColor">#8D9EEA</color>
+    <color name="background">#19173D</color>
+    <color name="spinner_item_pressed">#D3D3D3</color> <!-- Light gray for pressed state -->
+    <color name="spinner_item_selected">#CCCCFF</color> <!-- Light purple for selected state -->
+    <color name="spinner_item_default">#FFFFFF</color>  <!-- White for default -->
 </resources>

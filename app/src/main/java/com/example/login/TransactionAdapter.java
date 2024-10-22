@@ -37,8 +37,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull TransactionAdapter.MyViewHolder holder, int position) {
-        String currentId = Integer.toString(transactions.get(position).getTransactionId());
-        holder.txtId.setText(currentId);
 
         String currentDate = transactions.get(position).getDate();
         holder.txtDate.setText(currentDate);
@@ -46,8 +44,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String currentAmount = transactions.get(position).getAmount();
         holder.txtAmount.setText(currentAmount + " VND");
 
-        String currentSign = transactions.get(position).getSign();
-        if (currentSign.equals("plus")) {
+        Boolean currentSign = transactions.get(position).isIncome();
+        if (currentSign) {
             holder.txtSign.setText("+");
             holder.txtSign.setTextColor(Color.parseColor("#7CFF82"));
             holder.txtAmount.setTextColor(Color.parseColor("#7CFF82"));
@@ -60,7 +58,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String currentCategory = transactions.get(position).getCategory();
         holder.txtCategory.setText(currentCategory);
 
-        String currentAcc = transactions.get(position).getRelatedAcc();
+        String currentAcc = transactions.get(position).getAccount();
         holder.txtAcc.setText(currentAcc);
 
         String currentNote = transactions.get(position).getNote();
@@ -83,7 +81,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            txtId = itemView.findViewById(R.id.txtId);
             txtDate = itemView.findViewById(R.id.txtDate);
             txtAmount = itemView.findViewById(R.id.txtAmount);
             txtSign = itemView.findViewById(R.id.txtSign);
