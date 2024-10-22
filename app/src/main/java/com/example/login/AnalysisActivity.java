@@ -44,7 +44,7 @@ public class AnalysisActivity extends AppCompatActivity {
     TextView txtTotalIncome;
     TextView txtCurrentBalance;
     TextView txtSummary;
-    TextView getTxtSummarySpecific;
+    TextView txtSummarySpecific;
     TextView txtTotalSpending;
     View lilo_standard_analysis;
     View lilo_specific_analysis;
@@ -78,7 +78,7 @@ public class AnalysisActivity extends AppCompatActivity {
         txtTotalIncome = findViewById(R.id.txtTotalIncome);
         txtCurrentBalance = findViewById(R.id.txtCurrentBalance);
         txtSummary = findViewById(R.id.txtSummary);
-        getTxtSummarySpecific = findViewById(R.id.txtSummarySpecific);
+        txtSummarySpecific = findViewById(R.id.txtSummarySpecific);
         txtTotalSpending = findViewById(R.id.txtTotalSpending);
         lilo_standard_analysis = findViewById(R.id.lilo_standard_analysis);
         lilo_specific_analysis = findViewById(R.id.lilo_specific_analysis);
@@ -201,19 +201,13 @@ public class AnalysisActivity extends AppCompatActivity {
         PieDataSet pieDataSet = new PieDataSet(pieExpense, "Expenses");
         PieData pieData = new PieData(pieDataSet);
         pcSpecificAnalysis.setData(pieData);
+
+
+        // visual for pie chart
+        PieChartVisualLoader(pieDataSet);
+
         pcSpecificAnalysis.invalidate();
 
-
-        // visual for the pie chart
-        List<Integer> colors = generateColors(pieExpense.size());
-        pieDataSet.setColors(colors);
-
-
-        Legend legend = pcSpecificAnalysis.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER); // Aligns vertically in the center
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // Aligns horizontally to the right
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL); // Makes the legend items vertical
-        legend.setDrawInside(false);
 
 
         for (int i = 1; i <= weeklyIncome.length; i++) {
@@ -250,9 +244,14 @@ public class AnalysisActivity extends AppCompatActivity {
 
         txtTotalSpending.setText(sumExpense + " VND");
 
-        getTxtSummarySpecific.setText(String.format("For this month, you spent the most on %s. The spending on %s is %d VND. Reconsider agiain before spending on %s next time!", maxExpense, maxExpense, maxExpenseAmount, maxExpense));
+        if (sumExpense == 0) {
+            txtSummarySpecific.setText("");
+        } else {
+            txtSummarySpecific.setText(String.format("For this month, you spent the most on %s. The spending on %s is %d VND. Reconsider agiain before spending on %s next time!", maxExpense, maxExpense, maxExpenseAmount, maxExpense));
+        }
 
     }
+
 
     private List<Integer> generateColors(int count) {
         List<Integer> colors = new ArrayList<>();
@@ -263,6 +262,28 @@ public class AnalysisActivity extends AppCompatActivity {
         }
 
         return colors;
+    }
+
+    private void PieChartVisualLoader(PieDataSet pieDataSet) {
+        pcSpecificAnalysis.setDrawHoleEnabled(false);
+        pcSpecificAnalysis.setDrawSliceText(false);
+        pcSpecificAnalysis.setExtraOffsets(20f, 10f, 20f, 10f);
+        pcSpecificAnalysis.setDescription(null);
+        pcSpecificAnalysis.setDrawRoundedSlices(true);
+
+        pcSpecificAnalysis.animateY(1000);
+
+        List<Integer> colors = generateColors(pieExpense.size());
+        pieDataSet.setColors(colors);
+        pieDataSet.setValueTextColor(Color.BLACK);
+
+        Legend legend = pcSpecificAnalysis.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER); // Aligns vertically in the center
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // Aligns horizontally to the right
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL); // Makes the legend items vertical
+        legend.setTextColor(Color.WHITE);
+        legend.setYEntrySpace(10f);
+        legend.setDrawInside(false);
     }
 
     private void barChartVisualLoader(BarDataSet barExpenseDataSet, BarDataSet barIncomeDataSet, BarData barData) {
@@ -315,12 +336,38 @@ public class AnalysisActivity extends AppCompatActivity {
         for (int i = 1; i <= 50; i++) {
             if (i > 9 && i <= 31) {
                 if (i % 2 == 0) {
-                    transactions.add(new Transaction("user", "Travel", "" + (i * 100000), "Blah Blah", i + "/07/2024", true));
+                    transactions.add(new Transaction("admin", "Transport", "" + (i * 100000), "Blah Blah", i + "/07/2024", true));
                 } else {
-                    transactions.add(new Transaction("user", "Shopping", "" + (i * 30000), "This is the note for the testing. Ha Ha.", i + "/07/2024", false));
+                    transactions.add(new Transaction("admin", "Shopping", "" + (i * 30000), "This is the note for the testing. Ha Ha.", i + "/07/2024", false));
                 }
             } else {
-                transactions.add(new Transaction("user", "others", "" + (i * 20000 ), "Nothing to say", "07/07/2024", true));
+                transactions.add(new Transaction("admin", "Food", "" + (i * 10000 ), "Nothing to say", "07/09/2024", false));
+            }
+
+        }
+
+        for (int i = 1; i <= 50; i++) {
+            if (i > 9 && i <= 31) {
+                if (i % 2 == 0) {
+                    transactions.add(new Transaction("admin", "Transport", "" + (i * 30000), "Blah Blah", i + "/09/2024", false));
+                } else {
+                    transactions.add(new Transaction("admin", "Shopping", "" + (i * 7000), "This is the note for the testing. Ha Ha.", i + "/08/2024", false));
+                }
+            } else {
+                transactions.add(new Transaction("admin", "Others", "" + (i * 10000 ), "Nothing to say", "17/09/2024", false));
+            }
+
+        }
+
+        for (int i = 1; i <= 50; i++) {
+            if (i > 9 && i <= 30) {
+                if (i % 3 == 0) {
+                    transactions.add(new Transaction("admin", "Transport", "" + (i * 30000), "Blah Blah", i + "/07/2024", false));
+                } else {
+                    transactions.add(new Transaction("admin", "Food", "" + (i * 30000), "This is the note for the testing. Ha Ha.", i + "/07/2024", false));
+                }
+            } else {
+                transactions.add(new Transaction("admin", "Shopping", "" + (i * 20000 ), "Nothing to say", "03/09/2024", true));
             }
 
         }
