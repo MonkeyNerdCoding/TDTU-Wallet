@@ -60,6 +60,7 @@
         android:padding="30dp"
         android:background="@drawable/button_background"
         android:layout_weight="5"
+        android:onClick="switchAddTransactionActivity"
         />
 
 
