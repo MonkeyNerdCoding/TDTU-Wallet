@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     FirebaseAuth mAuth;
-    CardView Card_6,Card_5;
+    CardView Card_6,Card_5, Card_2, Card_3;
 
 
     @Override
@@ -29,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        Card_6= findViewById(R.id.Card_6);
+        Card_6 = findViewById(R.id.Card_6);
         Card_5 = findViewById(R.id.Card_5);
-        database= FirebaseDatabase.getInstance();
+        Card_2 = findViewById(R.id.Card_2);
+        Card_3 = findViewById(R.id.Card_3);
+        database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
@@ -49,10 +51,26 @@ public class MainActivity extends AppCompatActivity {
         Card_5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent accountIntent  = new Intent(MainActivity.this, activity_account.class);
+                Intent accountIntent = new Intent(MainActivity.this, activity_account.class);
                 accountIntent.putExtra("username", username);
                 accountIntent.putExtra("password", password);
                 startActivity(accountIntent);
+            }
+        });
+
+        Card_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentHistory = new Intent(MainActivity.this, TransactionHistoryActivity.class);
+                startActivity(intentHistory);
+            }
+        });
+
+        Card_3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentAnalysis = new Intent(MainActivity.this, AnalysisActivity.class);
+                startActivity(intentAnalysis);
             }
         });
     }
