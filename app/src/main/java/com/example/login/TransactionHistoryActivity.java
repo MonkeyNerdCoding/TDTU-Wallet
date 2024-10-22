@@ -18,6 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class TransactionHistoryActivity extends AppCompatActivity {
 
     RecyclerView rvTransaction;
@@ -100,21 +106,32 @@ public class TransactionHistoryActivity extends AppCompatActivity {
     private LinkedList<Transaction> loadData() {
         transactions = new LinkedList<>();
 
-        for (int i = 1; i <= 50; i++) {
-            if (i > 9 && i <= 31) {
-                if (i % 2 == 0) {
-                    transactions.add(new Transaction("user", "Travel", "" + (i * 100000), "Blah Blah", i + "/07/2024", true));
-                } else {
-                    transactions.add(new Transaction("user", "Shopping", "" + (i * 30000), "This is the note for the testing. Ha Ha.", i + "/07/2024", false));
+        // Get the Firebase Database reference
+        DatabaseReference transactionsRef = FirebaseDatabase.getInstance().getReference("transactions");
+
+        // Add a listener to read data from Firebase
+        transactionsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                transactions.clear();  // Clear the current list to avoid duplication
+
+                // Iterate through the transactions in the database
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Transaction transaction = snapshot.getValue(Transaction.class);
+                    transactions.add(transaction);
                 }
-            } else {
-                transactions.add(new Transaction("user", "others", "" + (i * 20000 ), "Nothing to say", "07/07/2024", true));
+
+                // Notify the adapter of data changes to update the RecyclerView
+                adapter.notifyDataSetChanged();
             }
 
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(TransactionHistoryActivity.this, "Failed to load transactions.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return transactions;
-
     }
 
     public void switchAnalysisActivity(View view) {

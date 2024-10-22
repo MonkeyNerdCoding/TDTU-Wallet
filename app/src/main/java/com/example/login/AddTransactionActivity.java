@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.Locale;
+import android.content.Intent;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,8 +42,10 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         ImageView backIcon = findViewById(R.id.back_icon);
         backIcon.setOnClickListener(v -> {
-            // Finish this activity and go back to the MainActivity
-            finish();
+            // Use an Intent to switch back to MainActivity
+            Intent intent = new Intent(AddTransactionActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Close the current activity
         });
 
         // Initialize Firebase Database
