@@ -1,6 +1,7 @@
 package com.example.login;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -16,15 +17,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 public class AnalysisActivity extends AppCompatActivity {
@@ -35,6 +44,7 @@ public class AnalysisActivity extends AppCompatActivity {
     TextView txtTotalIncome;
     TextView txtCurrentBalance;
     TextView txtSummary;
+    TextView getTxtSummarySpecific;
     TextView txtTotalSpending;
     View lilo_standard_analysis;
     View lilo_specific_analysis;
@@ -47,10 +57,14 @@ public class AnalysisActivity extends AppCompatActivity {
     LinkedList<Transaction> transactions;
     ArrayList<BarEntry> barIncome;
     ArrayList<BarEntry> barExpense;
+    ArrayList<PieEntry> pieExpense;
     int[] weeklyIncome;
     int[] weeklyExpense;
+    HashMap<String, Integer> expenses;
     int monthSelected;
     int yearSelected;
+    String maxExpense = "noExpense";
+    int maxExpenseAmount = Integer.MIN_VALUE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +78,7 @@ public class AnalysisActivity extends AppCompatActivity {
         txtTotalIncome = findViewById(R.id.txtTotalIncome);
         txtCurrentBalance = findViewById(R.id.txtCurrentBalance);
         txtSummary = findViewById(R.id.txtSummary);
+        getTxtSummarySpecific = findViewById(R.id.txtSummarySpecific);
         txtTotalSpending = findViewById(R.id.txtTotalSpending);
         lilo_standard_analysis = findViewById(R.id.lilo_standard_analysis);
         lilo_specific_analysis = findViewById(R.id.lilo_specific_analysis);
@@ -150,7 +165,6 @@ public class AnalysisActivity extends AppCompatActivity {
             lilo_specific_analysis.setVisibility(View.VISIBLE);
             lilo_standard_analysis.setVisibility(View.GONE);
 
-            Toast.makeText(this, "expense week 1: " + weeklyIncome[0] + " Week2 : " + weeklyExpense[1], Toast.LENGTH_SHORT).show();
         });
 
         txtStandard.setOnClickListener(v -> {
@@ -167,15 +181,45 @@ public class AnalysisActivity extends AppCompatActivity {
     private void standardAnalysisFormatter() {
         updateIncomeExpense(monthSelected, yearSelected);
 
+        pieExpense = new ArrayList<>();
+
         barIncome = new ArrayList<>();
         barExpense = new ArrayList<>();
 
         int sumIncome = 0;
         int sumExpense = 0;
 
+        for (Map.Entry<String, Integer> expense: expenses.entrySet()) {
+            pieExpense.add(new PieEntry(expense.getValue(), expense.getKey()));
+
+            if (expense.getValue() > maxExpenseAmount) {
+                maxExpenseAmount = expense.getValue();
+                maxExpense = expense.getKey();
+            }
+        }
+
+        PieDataSet pieDataSet = new PieDataSet(pieExpense, "Expenses");
+        PieData pieData = new PieData(pieDataSet);
+        pcSpecificAnalysis.setData(pieData);
+        pcSpecificAnalysis.invalidate();
+
+
+        // visual for the pie chart
+        List<Integer> colors = generateColors(pieExpense.size());
+        pieDataSet.setColors(colors);
+
+
+        Legend legend = pcSpecificAnalysis.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER); // Aligns vertically in the center
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // Aligns horizontally to the right
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL); // Makes the legend items vertical
+        legend.setDrawInside(false);
+
+
         for (int i = 1; i <= weeklyIncome.length; i++) {
             barIncome.add(new BarEntry(i, weeklyIncome[i - 1]));
             barExpense.add(new BarEntry(i + 0.3f, weeklyExpense[i - 1]));
+
 
             sumIncome += weeklyIncome[i - 1];
             sumExpense += weeklyExpense[i - 1];
@@ -205,6 +249,20 @@ public class AnalysisActivity extends AppCompatActivity {
         txtSummary.setText(String.format("In this month, your total expenses is %d VND and your total income is %d VND.%n%s", sumExpense, sumIncome, tempText));
 
         txtTotalSpending.setText(sumExpense + " VND");
+
+        getTxtSummarySpecific.setText(String.format("For this month, you spent the most on %s. The spending on %s is %d VND. Reconsider agiain before spending on %s next time!", maxExpense, maxExpense, maxExpenseAmount, maxExpense));
+
+    }
+
+    private List<Integer> generateColors(int count) {
+        List<Integer> colors = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < count; i++) {
+            colors.add(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+        }
+
+        return colors;
     }
 
     private void barChartVisualLoader(BarDataSet barExpenseDataSet, BarDataSet barIncomeDataSet, BarData barData) {
@@ -269,6 +327,8 @@ public class AnalysisActivity extends AppCompatActivity {
     }
 
     private void updateIncomeExpense(int month, int year) {
+        expenses = new HashMap<>();
+
         if (month != 2) {
             weeklyIncome = new int[5];
             weeklyExpense = new int[5];
@@ -278,13 +338,25 @@ public class AnalysisActivity extends AppCompatActivity {
         }
 
         for (Transaction transaction: transactions) {
+            String category = transaction.getCategory();
+            int amount = Integer.parseInt(transaction.getAmount().trim());
+            boolean sign = transaction.isIncome();
+
             String date = transaction.getDate();
             int transactionMonth = Integer.parseInt(date.substring(3, 5));
             int transactionYear = Integer.parseInt(date.substring(6, 10));
             int week = (Integer.parseInt(date.substring(0, 2)) - 1) / 7;
-            Boolean transactionSign = transaction.isIncome();
+            boolean transactionSign = transaction.isIncome();
 
             if (transactionMonth == month && transactionYear == year) {
+                if (!sign) {
+                    if (expenses.containsKey(category)) {
+                        expenses.put(category, expenses.get(category) + amount);
+                    } else {
+                        expenses.put(category, amount);
+                    }
+                }
+
                 if (transactionSign) {
                     weeklyIncome[week] += Integer.parseInt(transaction.getAmount());
                 } else {
@@ -317,5 +389,10 @@ public class AnalysisActivity extends AppCompatActivity {
         years.add("2024");
         years.add("2023");
         years.add("2022");
+    }
+
+    public void switchAddTransactionActivity(View view) {
+        Intent intentAddTransactionActivity = new Intent(this, AddTransactionActivity.class);
+        startActivity(intentAddTransactionActivity);
     }
 }
