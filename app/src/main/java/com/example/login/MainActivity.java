@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     FirebaseAuth mAuth;
-    CardView Card_6,Card_5, Card_2, Card_3;
+    CardView Card_6,Card_5, Card_2, Card_3, Card_1;
 
 
     @Override
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         Card_5 = findViewById(R.id.Card_5);
         Card_2 = findViewById(R.id.Card_2);
         Card_3 = findViewById(R.id.Card_3);
+        Card_1 = findViewById(R.id.Card_1);
         database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
@@ -55,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
                 accountIntent.putExtra("username", username);
                 accountIntent.putExtra("password", password);
                 startActivity(accountIntent);
+            }
+        });
+
+        Card_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentAddTransaction = new Intent(MainActivity.this, AddTransactionActivity.class);
+                startActivity(intentAddTransaction);
             }
         });
 

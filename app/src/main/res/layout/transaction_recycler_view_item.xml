@@ -25,7 +25,7 @@ android:background="@drawable/transaction_item_background">
         android:id="@+id/txtDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="10.10.2024"
+        android:text="10/10/2024"
         android:layout_weight="1"
         android:gravity="end"
         android:textSize="16sp"
@@ -33,32 +33,6 @@ android:background="@drawable/transaction_item_background">
         />
 </LinearLayout>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    >
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Transaction Id"
-        android:layout_weight="1"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        />
-
-    <TextView
-        android:id="@+id/txtId"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="1234567"
-        android:layout_weight="1"
-        android:gravity="end"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        />
-</LinearLayout>
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -140,7 +114,7 @@ android:background="@drawable/transaction_item_background">
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Related Account"
+        android:text="Account"
         android:layout_weight="1"
         android:textSize="16sp"
         android:textColor="@color/white"
