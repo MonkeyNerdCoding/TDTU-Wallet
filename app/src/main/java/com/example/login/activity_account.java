@@ -48,7 +48,7 @@ public class activity_account extends AppCompatActivity {
         TextView3 = findViewById(R.id.textView3);
 //        EditUsername.setText(username);
 //        EditPassword.setText(password);
-//        TextView3.setText(username);
+
         BtnSignOut = findViewById(R.id.btnSignOut);
         mAuth = FirebaseAuth.getInstance();
 
