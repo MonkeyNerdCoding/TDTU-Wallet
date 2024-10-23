@@ -108,7 +108,6 @@ public class AnalysisActivity extends AppCompatActivity {
                 monthSelected = position + 1;
                 standardAnalysisFormatter();
 
-
             }
 
             @Override
@@ -198,16 +197,14 @@ public class AnalysisActivity extends AppCompatActivity {
             }
         }
 
-        PieDataSet pieDataSet = new PieDataSet(pieExpense, "Expenses");
+        PieDataSet pieDataSet = new PieDataSet(pieExpense, "");
         PieData pieData = new PieData(pieDataSet);
         pcSpecificAnalysis.setData(pieData);
+        pcSpecificAnalysis.invalidate();
 
 
         // visual for pie chart
         PieChartVisualLoader(pieDataSet);
-
-        pcSpecificAnalysis.invalidate();
-
 
 
         for (int i = 1; i <= weeklyIncome.length; i++) {
@@ -284,6 +281,8 @@ public class AnalysisActivity extends AppCompatActivity {
         legend.setTextColor(Color.WHITE);
         legend.setYEntrySpace(10f);
         legend.setDrawInside(false);
+
+        pcSpecificAnalysis.invalidate();
     }
 
     private void barChartVisualLoader(BarDataSet barExpenseDataSet, BarDataSet barIncomeDataSet, BarData barData) {
@@ -327,7 +326,6 @@ public class AnalysisActivity extends AppCompatActivity {
 
         barData.setBarWidth(0.3f);
         bcMonthlyAnalysis.groupBars(1f, 0.2f, 0.05f);
-        bcMonthlyAnalysis.invalidate();
     }
 
     private void loadTransactions() {
@@ -387,7 +385,6 @@ public class AnalysisActivity extends AppCompatActivity {
         for (Transaction transaction: transactions) {
             String category = transaction.getCategory();
             int amount = Integer.parseInt(transaction.getAmount().trim());
-            boolean sign = transaction.isIncome();
 
             String date = transaction.getDate();
             int transactionMonth = Integer.parseInt(date.substring(3, 5));
@@ -396,18 +393,17 @@ public class AnalysisActivity extends AppCompatActivity {
             boolean transactionSign = transaction.isIncome();
 
             if (transactionMonth == month && transactionYear == year) {
-                if (!sign) {
-                    if (expenses.containsKey(category)) {
-                        expenses.put(category, expenses.get(category) + amount);
-                    } else {
-                        expenses.put(category, amount);
-                    }
-                }
 
                 if (transactionSign) {
                     weeklyIncome[week] += Integer.parseInt(transaction.getAmount());
                 } else {
                     weeklyExpense[week] += Integer.parseInt(transaction.getAmount());
+
+                    if (expenses.containsKey(category)) {
+                        expenses.put(category, expenses.get(category) + amount);
+                    } else {
+                        expenses.put(category, amount);
+                    }
                 }
             }
         }

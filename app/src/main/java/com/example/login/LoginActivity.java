@@ -43,9 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         Btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!validateUsername()||!validateUserpassword()){
 
-                }else{
+                if (!(!validateUsername()||!validateUserpassword())) {
                     checkUser();
                 }
             }
